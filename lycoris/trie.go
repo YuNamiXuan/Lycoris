@@ -7,6 +7,7 @@ type node struct {
 	part     string
 	children []*node
 	isWild   bool
+	handlers []HandlerFunc
 }
 
 func (n *node) matchChild(part string) *node {
@@ -28,14 +29,16 @@ func (n *node) matchChildren(part string) []*node {
 	return children
 }
 
-func (n *node) insert(pattern string, parts []string, height int) {
+func (n *node) insert(pattern string, parts []string, height int, handlers []HandlerFunc) {
 	if len(parts) == height {
 		n.pattern = pattern
+		n.handlers = handlers
 		return
 	}
 
 	part := parts[height]
 	child := n.matchChild(part)
+
 	if child == nil {
 		child = &node{
 			part:   part,
@@ -43,7 +46,8 @@ func (n *node) insert(pattern string, parts []string, height int) {
 		}
 		n.children = append(n.children, child)
 	}
-	child.insert(pattern, parts, height+1)
+
+	child.insert(pattern, parts, height+1, handlers)
 }
 
 func (n *node) search(parts []string, height int) *node {

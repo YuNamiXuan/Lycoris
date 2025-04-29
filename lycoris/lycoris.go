@@ -1,38 +1,10 @@
 package lycoris
 
-import (
-	"net/http"
-)
+// H 是通用的map类型别名，用于方便的构建JSON响应
+type H map[string]interface{}
 
-type HandlerFunc func(c *Context)
+// HandlerFunc 定义请求处理器类型
+type HandlerFunc func(*Context)
 
-type Engine struct {
-	router *router
-}
-
-func (e *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	c := newContext(w, r)
-	e.router.handle(c)
-}
-
-func New() *Engine {
-	return &Engine{
-		router: newRouter(),
-	}
-}
-
-func (e *Engine) addRoute(method, pattern string, handler HandlerFunc) {
-	e.router.addRoute(method, pattern, handler)
-}
-
-func (e *Engine) GET(pattern string, handler HandlerFunc) {
-	e.addRoute("GET", pattern, handler)
-}
-
-func (e *Engine) POST(pattern string, handler HandlerFunc) {
-	e.addRoute("POST", pattern, handler)
-}
-
-func (e *Engine) Run(address string) error {
-	return http.ListenAndServe(address, e)
-}
+// 框架的其他全局功能可以在这里添加
+// 例如默认中间件、全局配置等
