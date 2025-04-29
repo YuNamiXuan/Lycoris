@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"lycoris"
 	"net/http"
 )
@@ -9,14 +8,12 @@ import (
 func main() {
 	r := lycoris.New()
 
-	r.GET("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "URL PATH = %q\n", r.URL.Path)
+	r.GET("/", func(c *lycoris.Context) {
+		c.HTML(http.StatusOK, "<h1>Hello World!</h1>")
 	})
 
-	r.GET("/hello", func(w http.ResponseWriter, r *http.Request) {
-		for k, v := range r.Header {
-			fmt.Fprintf(w, "Header[%q]: %q\n", k, v)
-		}
+	r.GET("/hello/:name", func(c *lycoris.Context) {
+		c.String(http.StatusOK, "hello %s, you're at %s.\n", c.Params["name"], c.Path)
 	})
 
 	r.Run(":8080")
